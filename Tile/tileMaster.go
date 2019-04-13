@@ -45,6 +45,9 @@ func CreateAllTiles() (tiles []Tile) {
 	return tiles
 }
 
+var AllTiles = CreateAllTiles()
+
+
 type NewTileOption func(*Tile)
 
 //Tileの生成オプション
@@ -67,11 +70,10 @@ func NewTileWithOption(options ...NewTileOption) (*Tile, error) {
 	for _, option := range options {
 		option(tile)
 	}
-	defaultTiles := CreateAllTiles()
 
 	//WithIdの場合
 	if tile.id != 0 {
-		for _, defaultTile := range defaultTiles {
+		for _, defaultTile := range AllTiles {
 			if tile.id == defaultTile.id {
 				return &defaultTile, nil
 			}
@@ -79,7 +81,7 @@ func NewTileWithOption(options ...NewTileOption) (*Tile, error) {
 	}
 	//WithNameAndKindの場合
 	if tile.Name != "" {
-		for _, defaultTile := range defaultTiles {
+		for _, defaultTile := range AllTiles {
 			if tile.Name == defaultTile.Name && tile.Kind == defaultTile.Kind {
 				return &defaultTile, nil
 			}
@@ -89,12 +91,13 @@ func NewTileWithOption(options ...NewTileOption) (*Tile, error) {
 }
 
 func NewHaipai() (haipai []Tile) {
-	tiles := CreateAllTiles()
 	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < 13; i++ {
-		tile, _ := NewTileWithOption(WithId(ID(rand.Intn(len(tiles)) + 1)))
+		tile, _ := NewTileWithOption(WithId(ID(rand.Intn(len(AllTiles)) + 1)))
 		haipai = append(haipai, *tile)
 	}
 	sort.Slice(haipai,func(i,j int) bool {return haipai[i].id < haipai[j].id})
 	return haipai
 }
+
+
