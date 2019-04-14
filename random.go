@@ -7,20 +7,7 @@ import (
 )
 
 func main() {
-	// tiles := Tile.CreateAllTiles()
-
-	// //for test.
-	// for _, tile := range tiles {
-	// 	fmt.Println(tile)
-	// 	fmt.Printf("\n")
-	// }
-
-	haipai := Tile.NewHaipai()
-	for _, tile := range haipai {
-		fmt.Println(tile.JapaneseName)
-	}
-	fmt.Printf("\n")
-
+	//上がり牌
 	endTiles := Tile.NewEndTiles()
 	for _, tile := range endTiles {
 		fmt.Println(tile.JapaneseName)
