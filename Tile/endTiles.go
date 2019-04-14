@@ -1,8 +1,8 @@
 package Tile
 
 import (
-	"sort"
 	"math/rand"
+	"sort"
 	"time"
 )
 
@@ -25,6 +25,7 @@ func CreateMentsu() (mentsu []Tile) {
 	typeOfMentsu := new(TypeOfMentsu)
 	rand.Seed(time.Now().UnixNano())
 	typeOfMentsu.Mentsu = ShuntsuOrAnko[rand.Intn(2)]
+	//順子の場合
 	if typeOfMentsu.Mentsu == "Shuntsu" {
 		typeOfMentsu.Kind = NumberKind[rand.Intn(3)]
 		typeOfMentsu.Name = NumberName[rand.Intn(7)]
@@ -35,6 +36,7 @@ func CreateMentsu() (mentsu []Tile) {
 			mentsu = append(mentsu, *tile)
 		}
 	} else {
+		//暗子の場合
 		typeOfMentsu.NumberOrChanese = NumberOrChanese[rand.Intn(2)]
 		if typeOfMentsu.NumberOrChanese == "Number" {
 			typeOfMentsu.Kind = NumberKind[rand.Intn(3)]
@@ -55,14 +57,43 @@ func CreateMentsu() (mentsu []Tile) {
 	return mentsu
 }
 
-func NewEndTiles() (endTiles []Tile) {
-	for i := 0; i < 4; i++ {
-		endTiles = append(endTiles, CreateMentsu()...)
+func tilesIsCorrect(tiles []Tile) (isCorrect bool) {
+	isCorrect = false
+	i := 0
+	for i < len(tiles)-4 {
+		if tiles[i].id == tiles[i+4].id {
+			return isCorrect
+		} else if tiles[i].id == tiles[i+3].id {
+			i += 4
+			continue
+		} else if tiles[i].id == tiles[i+2].id {
+			i += 3
+			continue
+		} else if tiles[i].id == tiles[i+1].id {
+			i += 2
+			continue
+		}
+		i++
 	}
-	headTile, _ := NewTileWithOption(WithId(ID(rand.Intn(len(AllTiles)))))
-	for i := 0; i < 2; i++ {
-		endTiles = append(endTiles, *headTile)
+	isCorrect = true
+	return isCorrect
+}
+
+func NewEndTiles()(endTiles []Tile){
+	isCorrect := false
+	for isCorrect == false {
+		endTiles = []Tile{}
+		//メンツの追加
+		for i := 0; i < 4; i++ {
+			endTiles = append(endTiles, CreateMentsu()...)
+		}
+		//雀頭の生成
+		headTile, _ := NewTileWithOption(WithId(ID(rand.Intn(len(AllTiles)))))
+		for i := 0; i < 2; i++ {
+			endTiles = append(endTiles, *headTile)
+		}
+		sort.Slice(endTiles, func(i, j int) bool { return endTiles[i].id < endTiles[j].id })
+		isCorrect = tilesIsCorrect(endTiles)
 	}
-	sort.Slice(endTiles,func(i,j int) bool {return endTiles[i].id < endTiles[j].id})
 	return endTiles
 }
