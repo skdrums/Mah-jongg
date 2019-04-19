@@ -32,7 +32,7 @@ func CreateMentsu() (mentsu []Tile) {
 		tile, _ := NewTileWithOption(WithNameAndKind(typeOfMentsu.Name, typeOfMentsu.Kind))
 		mentsu = append(mentsu, *tile)
 		for i := 1; i < 3; i++ {
-			tile, _ := NewTileWithOption(WithId(tile.id + ID(i)))
+			tile, _ := NewTileWithOption(WithId(tile.ID + ID(i)))
 			mentsu = append(mentsu, *tile)
 		}
 	} else {
@@ -57,19 +57,20 @@ func CreateMentsu() (mentsu []Tile) {
 	return mentsu
 }
 
+// 各種ハイが５枚以上ないか判定
 func tilesIsCorrect(tiles []Tile) (isCorrect bool) {
 	isCorrect = false
 	i := 0
 	for i < len(tiles)-4 {
-		if tiles[i].id == tiles[i+4].id {
+		if tiles[i].ID == tiles[i+4].ID {
 			return isCorrect
-		} else if tiles[i].id == tiles[i+3].id {
+		} else if tiles[i].ID == tiles[i+3].ID {
 			i += 4
 			continue
-		} else if tiles[i].id == tiles[i+2].id {
+		} else if tiles[i].ID == tiles[i+2].ID {
 			i += 3
 			continue
-		} else if tiles[i].id == tiles[i+1].id {
+		} else if tiles[i].ID == tiles[i+1].ID {
 			i += 2
 			continue
 		}
@@ -92,7 +93,7 @@ func NewEndTiles()(endTiles []Tile){
 		for i := 0; i < 2; i++ {
 			endTiles = append(endTiles, *headTile)
 		}
-		sort.Slice(endTiles, func(i, j int) bool { return endTiles[i].id < endTiles[j].id })
+		sort.Slice(endTiles, func(i, j int) bool { return endTiles[i].ID < endTiles[j].ID })
 		isCorrect = tilesIsCorrect(endTiles)
 	}
 	return endTiles
