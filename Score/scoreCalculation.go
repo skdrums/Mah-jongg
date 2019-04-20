@@ -7,12 +7,12 @@ import (
 )
 
 type Mentsu struct {
-	Tiles    [3]Tile.Tile
+	Tiles    *[3]Tile.Tile
 	IsCalled bool
 }
 
 type Finisher struct {
-	Tile    Tile.Tile
+	Tile    *Tile.Tile
 	IsTsumo bool
 }
 
@@ -20,26 +20,20 @@ type Finisher struct {
 // <TODO　特殊系の考慮>
 type FinishData struct {
 	EndTiles                 []Tile.Tile
-	Mentsu                   [4]Mentsu
+	Mentsu                   *[4]Mentsu
 	Finisher, Dora, HeadTile Tile.Tile
 	PublicWind, PrivateWind  Tile.Name
 }
 
 //鳴きの考慮なし＠要編集
-func NewMentsu(tiles [3]Tile.Tile) *Mentsu {
-	mentsu := new(Mentsu)
-	for i,tile := range tiles{
-		mentsu.Tiles[i]=tile
-	}
-	mentsu.IsCalled = true
+func NewMentsu(tiles *[3]Tile.Tile) *Mentsu {
+	mentsu := &Mentsu{Tiles : tiles, IsCalled: true} 
 	return mentsu
 }
 
 //面前判定の考慮なし＠要編集
-func NewFinisher(tile Tile.Tile) *Finisher {
-	finisher := new(Finisher)
-	finisher.Tile = tile
-	finisher.IsTsumo = true
+func NewFinisher(tile *Tile.Tile) *Finisher {
+	finisher := &Finisher{Tile:tile,IsTsumo:true}
 	return finisher
 }
 
@@ -58,7 +52,12 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			for i,s :=range slice{
 				array[i]=s
 			}
-			d.Mentsu[k] = *NewMentsu(array)
+			fmt.Printf("array = ")
+			fmt.Println(array)
+			shuntsu := NewMentsu(&array)
+			fmt.Printf("shuntsu = ")
+			fmt.Println(shuntsu.Tiles)
+			d.Mentsu[k] = *shuntsu
 			k++
 			fmt.Println(d.Mentsu[k].IsCalled)
 			for _, tile := range d.Mentsu[k].Tiles {
@@ -72,7 +71,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			for i,s :=range slice{
 				array[i]=s
 			}
-			d.Mentsu[k] = *NewMentsu(array)
+			d.Mentsu[k] = *NewMentsu(&array)
 			fmt.Println(d.Mentsu[k].IsCalled)
 			for _, tile := range d.Mentsu[k].Tiles {
 				fmt.Println(tile)
