@@ -17,7 +17,7 @@ type ImageName string
 type JapaneseName string
 
 type Tile struct {
-	id           ID
+	ID           ID
 	Name         Name
 	Kind         Kind
 	ImageName    ImageName
@@ -27,7 +27,7 @@ type Tile struct {
 // Tileの生成
 func NewTile(id ID, name Name, kind Kind, imageName ImageName, japaneseName JapaneseName) *Tile {
 	t := new(Tile)
-	t.id = id
+	t.ID = id
 	t.Name, t.Kind, t.ImageName, t.JapaneseName = name, kind, imageName, japaneseName
 
 	return t
@@ -53,7 +53,7 @@ type NewTileOption func(*Tile)
 //Tileの生成オプション
 func WithId(id ID) NewTileOption {
 	return func(tile *Tile) {
-		tile.id = id
+		tile.ID = id
 	}
 }
 
@@ -72,9 +72,9 @@ func NewTileWithOption(options ...NewTileOption) (*Tile, error) {
 	}
 
 	//WithIdの場合
-	if tile.id != 0 {
+	if tile.ID != 0 {
 		for _, defaultTile := range AllTiles {
-			if tile.id == defaultTile.id {
+			if tile.ID == defaultTile.ID {
 				return &defaultTile, nil
 			}
 		}
@@ -96,7 +96,7 @@ func NewHaipai() (haipai []Tile) {
 		tile, _ := NewTileWithOption(WithId(ID(rand.Intn(len(AllTiles)) + 1)))
 		haipai = append(haipai, *tile)
 	}
-	sort.Slice(haipai,func(i,j int) bool {return haipai[i].id < haipai[j].id})
+	sort.Slice(haipai,func(i,j int) bool {return haipai[i].ID < haipai[j].ID})
 	return haipai
 }
 
