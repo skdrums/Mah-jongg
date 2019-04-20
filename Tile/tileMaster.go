@@ -17,7 +17,7 @@ type ImageName string
 type JapaneseName string
 
 type Tile struct {
-	ID          ID
+	ID           ID
 	Name         Name
 	Kind         Kind
 	ImageName    ImageName

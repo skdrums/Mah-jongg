@@ -13,7 +13,7 @@ func main() {
 	for _, tile := range endTiles {
 		fmt.Println(tile.JapaneseName)
 	}
-	data := Score.NewFinishData(endTiles)
+	data := Score.DevideTiles(endTiles)
 	for _, mentsu := range data.Mentsu {
 		for _, dataTile := range mentsu.Tiles {
 			fmt.Printf("%s|",dataTile.JapaneseName)

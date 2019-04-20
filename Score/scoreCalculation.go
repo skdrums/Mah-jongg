@@ -2,11 +2,12 @@ package Score
 
 import (
 	"fmt"
+
 	"../Tile"
 )
 
 type Mentsu struct {
-	Tiles    []Tile.Tile
+	Tiles    [3]Tile.Tile
 	IsCalled bool
 }
 
@@ -19,16 +20,18 @@ type Finisher struct {
 // <TODO　特殊系の考慮>
 type FinishData struct {
 	EndTiles                 []Tile.Tile
-	Mentsu                   []Mentsu
+	Mentsu                   [4]Mentsu
 	Finisher, Dora, HeadTile Tile.Tile
 	PublicWind, PrivateWind  Tile.Name
 }
 
 //鳴きの考慮なし＠要編集
-func NewMentsu(tiles []Tile.Tile) *Mentsu {
+func NewMentsu(tiles [3]Tile.Tile) *Mentsu {
 	mentsu := new(Mentsu)
-	mentsu.Tiles = append(mentsu.Tiles, tiles...)
-	mentsu.IsCalled = false
+	for i,tile := range tiles{
+		mentsu.Tiles[i]=tile
+	}
+	mentsu.IsCalled = true
 	return mentsu
 }
 
@@ -43,21 +46,37 @@ func NewFinisher(tile Tile.Tile) *Finisher {
 func backtrack(i int, t []Tile.Tile, d *FinishData) {
 	u := Tile.Tile{}
 	k := 0
-	for j := i + 1; j < 14; j++ {
-		switch {
-		case j == i+1 && t[j].ID == t[i].ID && d.HeadTile == u:
+	for j := i + 1; j < 14 && j-i < 3; j++ {
+		fmt.Printf("i = %d,j = %d  ", i, j)
+		if j == i+1 && t[j].ID == t[i].ID && d.HeadTile == u {
 			d.HeadTile = t[i]
 			fmt.Println(d.HeadTile)
 			backtrack(j+1, t, d)
-		case j == i+2 && t[j].ID == t[i].ID+2:
-			d.Mentsu[k] = *NewMentsu(t[i:3])
+		} else if j == i+2 && t[j].Kind == t[i].Kind {
+			slice := t[i:3]
+			array := [3]Tile.Tile{}
+			for i,s :=range slice{
+				array[i]=s
+			}
+			d.Mentsu[k] = *NewMentsu(array)
 			k++
-			fmt.Println(d.Mentsu[k])
+			fmt.Println(d.Mentsu[k].IsCalled)
+			for _, tile := range d.Mentsu[k].Tiles {
+				fmt.Println(tile)
+			}
 			backtrack(j+1, t, d)
 			k--
-		case j == i+2 && t[j].ID == t[i].ID:
-			d.Mentsu[k] = *NewMentsu(t[i:3])
-			fmt.Println(d.Mentsu[k])
+		} else if j == i+2 && t[j].ID == t[i].ID {
+			slice := t[i:3]
+			array := [3]Tile.Tile{}
+			for i,s :=range slice{
+				array[i]=s
+			}
+			d.Mentsu[k] = *NewMentsu(array)
+			fmt.Println(d.Mentsu[k].IsCalled)
+			for _, tile := range d.Mentsu[k].Tiles {
+				fmt.Println(tile)
+			}
 			k++
 			backtrack(j+1, t, d)
 			k--
@@ -66,18 +85,20 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 }
 
 func NewFinishData(endTiles []Tile.Tile) *FinishData {
-	finishData:=new(FinishData)
+	finishData := new(FinishData)
 	finishData.EndTiles = endTiles
+
+	return finishData
+}
+
+func DevideTiles(endTiles []Tile.Tile) *FinishData{
+	finishData:=NewFinishData(endTiles)
 	backtrack(0, endTiles, finishData)
 
 	return finishData
 }
 
-func devideTiles(endTiles []Tile.Tile) {
-
-}
-
-func calculateAScore(tiles []Tile.Tile) (score int) {
+func CalculateAScore(tiles []Tile.Tile) (score int) {
 
 	return score
 }
