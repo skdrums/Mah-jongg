@@ -3,7 +3,7 @@ package Score
 import (
 	"fmt"
 
-	"../Tile"
+	"Mah-jongg/Tile"
 )
 
 type Mentsu struct {
