@@ -36,10 +36,10 @@ func NewFinisher(tile *Tile.Tile) *Finisher {
 	finisher := &Finisher{Tile: tile, IsTsumo: true}
 	return finisher
 }
-
+// kはtest用flag
 var k int = 0
 var u = Tile.Tile{}
-var flagOfPatterns int = 0
+var isUsedTile = [14]int{}
 
 //var patterns = [3]FinishData{*NewFinishData(),*NewFinishData(t),*NewFinishData(t)}
 
@@ -47,6 +47,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 	fmt.Printf("@i = %d \n", i)
 	fmt.Println(bool(d.HeadTile == &u))
 	fmt.Println(d.HeadTile)
+	//できていれば表示
 	if i == 14 {
 		for _, mentsu := range d.Mentsu {
 			for _, dataTile := range mentsu.Tiles {
@@ -59,6 +60,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			i++
 		}
 	}
+	//backtrack中身
 	for j := i + 1; j < 14 && j-i < 3; j++ {
 
 		fmt.Printf("@i = %d,j = %d  \n", i, j)
@@ -67,8 +69,10 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			fmt.Println(bool(*d.HeadTile == u))
 			fmt.Printf("ヘッドだよ")
 			fmt.Println(d.HeadTile)
+			isUsedTile[i],isUsedTile[j]=1,1
 			backtrack(j+1, t, d)
 			d.HeadTile = &u
+			isUsedTile[i],isUsedTile[j]=0,0
 		} else if j == i+2 && t[j].Kind == t[i].Kind && t[j].ID == t[i].ID+Tile.ID(2) && t[j].ID == t[i+1].ID+Tile.ID(1) { // 順子
 			slice := t[i : i+3]
 			array := [3]Tile.Tile{}
@@ -81,7 +85,9 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			// fmt.Printf("Mentsu[%d].Tiles = ", k)
 			// fmt.Println(d.Mentsu[k].Tiles)
 			k++
+			isUsedTile[i],isUsedTile[i+1],isUsedTile[j]=1,1,1
 			backtrack(j+1, t, d)
+			isUsedTile[i],isUsedTile[i+1],isUsedTile[j]=0,0,0
 			k--
 		} else if j == i+2 && t[j].ID == t[i].ID { // 暗子
 			slice := t[i : i+3]
@@ -95,7 +101,9 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			// fmt.Printf("Mentsu[%d].Tiles = ", k)
 			// fmt.Println(d.Mentsu[k].Tiles)
 			k++
+			isUsedTile[i],isUsedTile[i+1],isUsedTile[j]=1,1,1
 			backtrack(j+1, t, d)
+			isUsedTile[i],isUsedTile[i+1],isUsedTile[j]=0,0,0
 			k--
 		}
 	}
