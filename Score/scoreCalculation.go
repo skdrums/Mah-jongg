@@ -39,7 +39,7 @@ func NewFinisher(tile *Tile.Tile) *Finisher {
 
 var k int = 0
 var m int = 0 // iに代入される!isUsedTileな数値を格納
-var unusedTile = []Tile.Tile{}
+var unusedTile = [14]Tile.Tile{}
 var u = Tile.Tile{}
 var isUsedTile = [14]bool{}
 
@@ -58,15 +58,15 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 		}
 	}
 
-	unusedTile = []Tile.Tile{}	//初期化
+	unusedTile = [14]Tile.Tile{} //初期化
 	// unusedTileの生成
-	for key , value :=range t{
-		if !isUsedTile[key]{
-			unusedTile = append(unusedTile, value)
+	for key, value := range t {
+		if !isUsedTile[key] {
+			unusedTile[key] = value
 		}
 	}
-	for _,value:=range unusedTile{
-		fmt.Printf("%s ",value.JapaneseName)
+	for _, value := range unusedTile {
+		fmt.Printf("%s ", value.JapaneseName)
 	}
 	fmt.Printf("\n")
 
@@ -82,6 +82,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			fmt.Printf("%s|", d.HeadTile.JapaneseName)
 			i++
 		}
+		
 	}
 
 	//backtrackのメインロジック
@@ -103,15 +104,21 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			backtrack(m, t, d)
 			d.HeadTile = &u
 			isUsedTile[i], isUsedTile[j] = false, false
-		} else if j >= i+2 && t[i].ID == t[n].ID { // 暗子
-			// if t[i].Kind == t[j].Kind && t[i].ID+Tile.ID(1) == t[j].ID {
-			// 	for _,value := range unusedTile{
-			// 		if value== t[i].ID+Tile.ID(2)&&value.Kind==t[i].Kind{
-						
-			// 		}
-			// 	}
-			// }
-			if t[i].ID == t[j].ID {
+		} else if j >= i+2 && t[i].ID == t[n].ID { // 暗子 or 一盃口
+			flag := false
+			if t[i].Kind == t[j].Kind && t[i].ID+Tile.ID(1) == t[j].ID {
+				n = j
+				for key, value := range unusedTile {
+					if value.Kind == t[i].Kind && value.ID == t[i].ID+Tile.ID(2) {
+						j = key
+						flag = true
+						break
+					}
+				}
+			} else if t[i].ID == t[j].ID {
+				flag = true
+			}
+			if flag {
 				array := [3]Tile.Tile{}
 				array[0], array[1], array[2] = t[i], t[n], t[j]
 				for key, tile := range array {
@@ -119,7 +126,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 				}
 				k++
 				isUsedTile[i], isUsedTile[n], isUsedTile[j] = true, true, true
-				for l := n; l <= 14; l++ {
+				for l := i; l <= 14; l++ {
 					if l == 14 || !isUsedTile[l] {
 						m = l
 						break
