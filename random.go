@@ -10,8 +10,8 @@ import (
 func main() {
 	//上がり牌
 	endTiles := Tile.NewEndTiles()
-	for _, tile := range endTiles {
-		fmt.Println(tile.JapaneseName)
+	for i, tile := range endTiles {
+		fmt.Printf("%.2d  %s\n",i,tile.JapaneseName)
 	}
 	data := Score.DevideTiles(endTiles)
 	fmt.Printf("headtile")
