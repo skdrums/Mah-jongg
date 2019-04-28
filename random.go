@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"./Score"
-	"./Tile"
+	"Mah-jongg/Score"
+	"Mah-jongg/Tile"
 )
 
 func main() {
