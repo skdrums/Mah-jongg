@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"../Csv"
+	"Mah-jongg/Csv"
 )
 
 type ID int

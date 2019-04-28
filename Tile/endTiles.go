@@ -82,7 +82,7 @@ func tilesIsCorrect(tiles []Tile) (isCorrect bool) {
 
 func NewEndTiles()(endTiles []Tile){
 	isCorrect := false
-	for isCorrect == false {
+	for !isCorrect {
 		endTiles = []Tile{}
 		//メンツの追加
 		for i := 0; i < 4; i++ {

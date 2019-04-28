@@ -3,7 +3,7 @@ package Score
 import (
 	"fmt"
 
-	"../Tile"
+	"Mah-jongg/Tile"
 )
 
 type Mentsu struct {
@@ -17,7 +17,7 @@ type Finisher struct {
 }
 
 // 上がりハイをここに格納し、点数計算できる状態にする
-// <TODO　特殊系の考慮>
+// TODO: 特殊系の考慮
 type FinishData struct {
 	EndTiles                 []Tile.Tile
 	Mentsu                   *[4]Mentsu
@@ -38,8 +38,9 @@ func NewFinisher(tile *Tile.Tile) *Finisher {
 }
 
 var k int = 0
+var m int = 0
 var u = Tile.Tile{}
-var flagOfPatterns int = 0
+var isUsedTile = [14]bool{}
 
 //var patterns = [3]FinishData{*NewFinishData(),*NewFinishData(t),*NewFinishData(t)}
 
@@ -47,6 +48,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 	fmt.Printf("@i = %d \n", i)
 	fmt.Println(bool(d.HeadTile == &u))
 	fmt.Println(d.HeadTile)
+	//できていれば表示
 	if i == 14 {
 		for _, mentsu := range d.Mentsu {
 			for _, dataTile := range mentsu.Tiles {
@@ -59,6 +61,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			i++
 		}
 	}
+	//backtrackのメインロジック
 	for j := i + 1; j < 14 && j-i < 3; j++ {
 
 		fmt.Printf("@i = %d,j = %d  \n", i, j)
@@ -67,23 +70,17 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			fmt.Println(bool(*d.HeadTile == u))
 			fmt.Printf("ヘッドだよ")
 			fmt.Println(d.HeadTile)
-			backtrack(j+1, t, d)
+			isUsedTile[i], isUsedTile[j] = true, true
+			for l := j + 1; l <= 14; l++ {
+				if l == 14 || !isUsedTile[l] {
+					m = l
+					break
+				}
+			}
+			backtrack(m, t, d)
 			d.HeadTile = &u
-		} else if j == i+2 && t[j].Kind == t[i].Kind && t[j].ID == t[i].ID+Tile.ID(2) && t[j].ID == t[i+1].ID+Tile.ID(1) { // 順子
-			slice := t[i : i+3]
-			array := [3]Tile.Tile{}
-			for key, s := range slice {
-				array[key] = s
-			}
-			for key, tile := range array {
-				d.Mentsu[k].Tiles[key] = tile
-			}
-			// fmt.Printf("Mentsu[%d].Tiles = ", k)
-			// fmt.Println(d.Mentsu[k].Tiles)
-			k++
-			backtrack(j+1, t, d)
-			k--
-		} else if j == i+2 && t[j].ID == t[i].ID { // 暗子
+			isUsedTile[i], isUsedTile[j] = false, false
+		} else if j == i+2 && t[i].ID == t[i+1].ID && t[i].ID == t[j].ID { // 暗子
 			slice := t[i : i+3]
 			array := [3]Tile.Tile{}
 			for i, s := range slice {
@@ -95,7 +92,36 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			// fmt.Printf("Mentsu[%d].Tiles = ", k)
 			// fmt.Println(d.Mentsu[k].Tiles)
 			k++
-			backtrack(j+1, t, d)
+			isUsedTile[i], isUsedTile[i+1], isUsedTile[j] = true, true, true
+			for l := j + 1; l <= 14; l++ {
+				if l == 14 || !isUsedTile[l] {
+					m = l
+					break
+				}
+			}
+			backtrack(m, t, d)
+			isUsedTile[i], isUsedTile[i+1], isUsedTile[j] = false, false, false
+			k--
+		} else if j >= i+2 && t[i].Kind == t[i+1].Kind && t[i+1].ID == t[i].ID+Tile.ID(1) { // 順子
+			array := [3]Tile.Tile{}
+			if t[j].ID == t[i].ID+Tile.ID(2) {
+				array[0], array[1], array[2] = t[i], t[i+1], t[j]
+			}
+			for key, tile := range array {
+				d.Mentsu[k].Tiles[key] = tile
+			}
+			// fmt.Printf("Mentsu[%d].Tiles = ", k)
+			// fmt.Println(d.Mentsu[k].Tiles)
+			k++
+			isUsedTile[i], isUsedTile[i+1], isUsedTile[j] = true, true, true
+			for l := j + 1; l <= 14; l++ {
+				if l == 14 || !isUsedTile[l] {
+					m = l
+					break
+				}
+			}
+			backtrack(m, t, d)
+			isUsedTile[i], isUsedTile[i+1], isUsedTile[j] = false, false, false
 			k--
 		}
 	}
