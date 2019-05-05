@@ -17,7 +17,6 @@ type Finisher struct {
 }
 
 // 上がりハイをここに格納し、点数計算できる状態にする
-// TODO: 特殊系の考慮(イーペーコー)
 type FinishData struct {
 	EndTiles                 []Tile.Tile
 	Mentsu                   *[4]Mentsu
