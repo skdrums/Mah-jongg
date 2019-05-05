@@ -22,6 +22,7 @@ type FinishData struct {
 	Mentsu                   *[4]Mentsu
 	Finisher, Dora, HeadTile *Tile.Tile
 	PublicWind, PrivateWind  Tile.Name
+	Reach                    bool
 }
 
 //鳴きの考慮なし＠要編集
@@ -81,12 +82,14 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			fmt.Printf("%s|", d.HeadTile.JapaneseName)
 			i++
 		}
-		
+
 	}
 
 	//backtrackのメインロジック
 	for j := n; j < 14 && i < 14; j++ {
-
+		if isUsedTile[j] {
+			continue
+		}
 		fmt.Printf("@i = %d,j = %d, n = %d  \n", i, j, n)
 		if j == i+1 && t[j].ID == t[i].ID && *d.HeadTile == u { //雀頭
 			d.HeadTile = &t[i]
@@ -105,16 +108,16 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			isUsedTile[i], isUsedTile[j] = false, false
 		} else if j >= i+2 && t[i].ID == t[n].ID { // 暗子 or 一盃口
 			flag := false
-			if t[i].Kind == t[j].Kind && t[i].ID+Tile.ID(1) == t[j].ID {
+			if t[i].Kind == t[j].Kind && t[i].ID+Tile.ID(1) == t[j].ID { // 一盃口
 				n = j
 				for key, value := range unusedTile {
-					if value.Kind == t[i].Kind && value.ID == t[i].ID+Tile.ID(2) {
+					if value.Kind == t[i].Kind && value.ID == t[i].ID+Tile.ID(2) { 
 						j = key
 						flag = true
 						break
 					}
 				}
-			} else if t[i].ID == t[j].ID {
+			} else if t[i].ID == t[j].ID { // 暗子
 				flag = true
 			}
 			if flag {
