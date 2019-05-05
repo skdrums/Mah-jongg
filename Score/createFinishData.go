@@ -9,6 +9,7 @@ import (
 type Mentsu struct {
 	Tiles    *[3]Tile.Tile
 	IsCalled bool
+	IsAnko   bool
 }
 
 type Finisher struct {
@@ -22,18 +23,21 @@ type FinishData struct {
 	Mentsu                   *[4]Mentsu
 	Finisher, Dora, HeadTile *Tile.Tile
 	PublicWind, PrivateWind  Tile.Name
-	isReached                    bool
+	YakuList                 []string
+	IsReached                bool
+	IsMenzen                 bool
+	IsParent                 bool
 }
 
 //鳴きの考慮なし＠要編集
 func NewMentsu(tiles *[3]Tile.Tile) *Mentsu {
-	mentsu := &Mentsu{Tiles: tiles, IsCalled: true}
+	mentsu := &Mentsu{Tiles: tiles, IsCalled: false, IsAnko: false}
 	return mentsu
 }
 
 //面前判定の考慮なし＠要編集
 func NewFinisher(tile *Tile.Tile) *Finisher {
-	finisher := &Finisher{Tile: tile, IsTsumo: true}
+	finisher := &Finisher{Tile: tile, IsTsumo: false}
 	return finisher
 }
 
@@ -45,6 +49,7 @@ var isUsedTile = [14]bool{}
 
 //var patterns = [3]FinishData{*NewFinishData(),*NewFinishData(t),*NewFinishData(t)}
 
+//format endTiles
 func backtrack(i int, t []Tile.Tile, d *FinishData) {
 	fmt.Printf("@i = %d \n", i)
 	fmt.Println(d.HeadTile)
@@ -111,7 +116,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 			if t[i].Kind == t[j].Kind && t[i].ID+Tile.ID(1) == t[j].ID { // 一盃口
 				n = j
 				for key, value := range unusedTile {
-					if value.Kind == t[i].Kind && value.ID == t[i].ID+Tile.ID(2) { 
+					if value.Kind == t[i].Kind && value.ID == t[i].ID+Tile.ID(2) {
 						j = key
 						flag = true
 						break
@@ -119,6 +124,7 @@ func backtrack(i int, t []Tile.Tile, d *FinishData) {
 				}
 			} else if t[i].ID == t[j].ID { // 暗子
 				flag = true
+				d.Mentsu[k].IsAnko = true
 			}
 			if flag {
 				array := [3]Tile.Tile{}
@@ -171,7 +177,7 @@ func NewFinishData(endTiles []Tile.Tile) *FinishData {
 		}
 	}
 	mentsu := [4]Mentsu{*NewMentsu(&tiles[0]), *NewMentsu(&tiles[1]), *NewMentsu(&tiles[2]), *NewMentsu(&tiles[3])}
-	finishData := FinishData{EndTiles: endTiles, Mentsu: &mentsu, Finisher: new(Tile.Tile), Dora: new(Tile.Tile), HeadTile: new(Tile.Tile)}
+	finishData := FinishData{EndTiles: endTiles, Mentsu: &mentsu, Finisher: new(Tile.Tile), Dora: new(Tile.Tile), HeadTile: new(Tile.Tile), PublicWind: "east", PrivateWind: "east", IsReached: false, IsMenzen: false, IsParent: false}
 
 	return &finishData
 }

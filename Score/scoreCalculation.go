@@ -1,7 +1,6 @@
 package Score
 
 type ScoreData struct {
-	YakuList     []string
 	Hansuu   int
 	Fu       int
 	IsParent bool
@@ -14,15 +13,4 @@ func NewScoreData(hansuu int, fu int) *ScoreData {
 	scoreData.Fu = fu
 
 	return scoreData
-}
-
-type Yaku struct {
-	List   []string
-	Hansuu int
-}
-
-func NewYaku(list []string) *Yaku {
-	yaku := new(Yaku)
-	yaku.List = list
-	return yaku
 }
